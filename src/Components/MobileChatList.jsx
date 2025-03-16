@@ -24,19 +24,21 @@ export default function MobileChatList({
       <div
         className={`absolute top-14 left-0 right-0 bottom-0 ${
           theme === "light" ? "bg-white" : "bg-[#1E2A47]"
-        } transition-transform duration-300 transform ${isOpen ? "translate-y-0" : "translate-y-full"} flex flex-col`}
+        } transition-transform duration-300 transform ${isOpen ? "translate-y-0" : "translate-y-full"} mobile-chat-container`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
-          <h2 className={`text-lg font-semibold ${theme === "light" ? "text-gray-800" : "text-gray-100"}`}>Chats</h2>
-          <button
-            onClick={onClose}
-            className={`p-2 rounded-full ${theme === "light" ? "text-gray-600 hover:bg-gray-100" : "text-gray-400 hover:bg-[#2B3B5E]"}`}
-          >
-            <X size={20} />
-          </button>
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700 mobile-chat-header">
+          <div className="flex items-center justify-between">
+            <h2 className={`text-lg font-semibold ${theme === "light" ? "text-gray-800" : "text-gray-100"}`}>Chats</h2>
+            <button
+              onClick={onClose}
+              className={`p-2 rounded-full ${theme === "light" ? "text-gray-600 hover:bg-gray-100" : "text-gray-400 hover:bg-[#2B3B5E]"}`}
+            >
+              <X size={20} />
+            </button>
+          </div>
         </div>
 
-        <div className="p-4 flex-shrink-0">
+        <div className="p-4 mobile-chat-header">
           <div className="relative mb-4">
             <input
               type="text"
@@ -49,7 +51,7 @@ export default function MobileChatList({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 scrollbar-hide">
+        <div className="px-4 mobile-chat-list scrollbar-hide">
           {isSearching ? (
             <div>
               <div className="flex items-center text-sm text-gray-400 mb-2">

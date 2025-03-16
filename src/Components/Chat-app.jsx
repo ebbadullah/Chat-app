@@ -73,33 +73,92 @@ export default function ChatApp({ user, onSignOut }) {
   useEffect(() => {
     const style = document.createElement("style")
     style.textContent = `
-    .scrollbar-hide::-webkit-scrollbar {
-      display: none;
-    }
-    .scrollbar-hide {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    
-    /* Ensure the expanded navbar appears below the header */
-    .mobile-expanded-navbar {
-      top: 3.5rem !important; /* 14px (top bar height) */
-      z-index: 25 !important;
-    }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
-    /* Add responsive utilities for very small screens */
-    @media (min-width: 400px) {
-      .xs\\:block {
-        display: block;
-      }
-    }
-    
-    @media (max-width: 399px) {
-      .xs\\:block {
-        display: none;
-      }
-    }
-  `
+/* Ensure the expanded navbar appears below the header */
+.mobile-expanded-navbar {
+  top: 3.5rem !important; /* 14px (top bar height) */
+  z-index: 25 !important;
+}
+
+/* Add responsive utilities for very small screens */
+@media (min-width: 400px) {
+  .xs\\:block {
+    display: block;
+  }
+}
+
+@media (max-width: 399px) {
+  .xs\\:block {
+    display: none;
+  }
+}
+
+/* Fixed chat layout */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.chat-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: inherit;
+}
+
+.chat-messages {
+  position: absolute;
+  top: 70px; /* Adjust based on your header height */
+  bottom: 70px; /* Adjust based on your input height */
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1rem;
+}
+
+.chat-input {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: inherit;
+}
+
+/* Mobile chat list */
+.mobile-chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.mobile-chat-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: inherit;
+}
+
+.mobile-chat-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+`
     document.head.appendChild(style)
 
     return () => {
@@ -788,7 +847,9 @@ export default function ChatApp({ user, onSignOut }) {
                             />
                             {searchUser.state === "online" && (
                               <span
-                                className={`absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 ${theme === "light" ? "border-white" : "border-[#1E2A47]"}`}
+                                className={`absolute bottom-0 right-0 w-3 h-3 bg  && (
+                              <span
+                                className={\`absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 ${theme === "light" ? "border-white" : "border-[#1E2A47]"}`}
                               ></span>
                             )}
                           </div>
@@ -892,14 +953,14 @@ export default function ChatApp({ user, onSignOut }) {
           <div className="flex-1 flex relative h-full">
             {/* Mobile Chat List View */}
             {window.innerWidth < 768 && mobileView === "list" ? (
-              <div className="w-full h-full flex flex-col">
-                <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+              <div className="w-full h-full flex flex-col mobile-chat-container">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700 mobile-chat-header">
                   <h2 className={`text-lg font-semibold ${theme === "light" ? "text-gray-800" : "text-gray-100"}`}>
                     Chats
                   </h2>
                 </div>
 
-                <div className="p-4 flex-shrink-0">
+                <div className="p-4 mobile-chat-header">
                   <div className="relative mb-4">
                     <input
                       type="text"
@@ -912,7 +973,7 @@ export default function ChatApp({ user, onSignOut }) {
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto px-4 scrollbar-hide">
+                <div className="px-4 mobile-chat-list scrollbar-hide">
                   {isSearching ? (
                     <div>
                       <div className="flex items-center text-sm text-gray-400 mb-2">
@@ -1042,11 +1103,19 @@ export default function ChatApp({ user, onSignOut }) {
                 {selectedUser ? (
                   /* Main chat content */
                   <div
-                    className={`flex flex-col ${showMediaFiles ? "md:w-3/5" : "w-full"} transition-all duration-300 h-full`}
+                    className={`${showMediaFiles ? "md:w-3/5" : "w-full"} transition-all duration-300 chat-container`}
+                    style={{
+                      height: "100%",
+                      backgroundColor: theme === "light" ? "white" : "#1E2A47",
+                    }}
                   >
                     {/* Chat header - fixed */}
                     <div
-                      className={`p-2 sm:p-4 flex items-center justify-between ${theme === "light" ? "border-gray-200" : "border-gray-700/50"} border-b relative flex-shrink-0`}
+                      className={`p-2 sm:p-4 flex items-center justify-between ${theme === "light" ? "border-gray-200" : "border-gray-700/50"} border-b chat-header`}
+                      style={{
+                        backgroundColor: theme === "light" ? "white" : "#1E2A47",
+                        height: "70px", // Adjust based on your design
+                      }}
                     >
                       <div className="flex items-center min-w-0">
                         {window.innerWidth < 768 && mobileView === "chat" && (
@@ -1095,7 +1164,10 @@ export default function ChatApp({ user, onSignOut }) {
 
                     {/* Messages - scrollable */}
                     <div
-                      className={`flex-1 p-6 overflow-y-auto ${theme === "light" ? "bg-gray-50" : ""} scrollbar-hide min-h-0`}
+                      className={`${theme === "light" ? "bg-gray-50" : ""} scrollbar-hide chat-messages`}
+                      style={{
+                        backgroundColor: theme === "light" ? "#f9fafb" : "#1E2A47",
+                      }}
                     >
                       {messages.length > 0 ? (
                         messages.map((message) => (
@@ -1192,7 +1264,11 @@ export default function ChatApp({ user, onSignOut }) {
 
                     {/* Message input - fixed */}
                     <div
-                      className={`p-2 sm:p-4 ${theme === "light" ? "border-gray-200" : "border-gray-700/50"} border-t flex-shrink-0`}
+                      className={`p-2 sm:p-4 ${theme === "light" ? "border-gray-200" : "border-gray-700/50"} border-t chat-input`}
+                      style={{
+                        backgroundColor: theme === "light" ? "white" : "#1E2A47",
+                        height: "70px", // Adjust based on your design
+                      }}
                     >
                       {isUploading && (
                         <div className="mb-2">
