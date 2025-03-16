@@ -86,6 +86,19 @@ export default function ChatApp({ user, onSignOut }) {
       top: 3.5rem !important; /* 14px (top bar height) */
       z-index: 25 !important;
     }
+
+    /* Add responsive utilities for very small screens */
+    @media (min-width: 400px) {
+      .xs\\:block {
+        display: block;
+      }
+    }
+    
+    @media (max-width: 399px) {
+      .xs\\:block {
+        display: none;
+      }
+    }
   `
     document.head.appendChild(style)
 
@@ -1033,47 +1046,49 @@ export default function ChatApp({ user, onSignOut }) {
                   >
                     {/* Chat header - fixed */}
                     <div
-                      className={`p-4 flex items-center justify-between ${theme === "light" ? "border-gray-200" : "border-gray-700/50"} border-b relative flex-shrink-0`}
+                      className={`p-2 sm:p-4 flex items-center justify-between ${theme === "light" ? "border-gray-200" : "border-gray-700/50"} border-b relative flex-shrink-0`}
                     >
-                      <div className="flex items-center">
+                      <div className="flex items-center min-w-0">
                         {window.innerWidth < 768 && mobileView === "chat" && (
                           <button
                             onClick={goBackToList}
-                            className={`mr-2 p-2 rounded-lg ${theme === "light" ? "text-gray-600 hover:bg-gray-100" : "text-gray-400 hover:bg-[#2B3B5E]"}`}
+                            className={`mr-2 p-1.5 rounded-lg ${theme === "light" ? "text-gray-600 hover:bg-gray-100" : "text-gray-400 hover:bg-[#2B3B5E]"} flex-shrink-0`}
                           >
-                            <ChevronLeft size={20} />
+                            <ChevronLeft size={18} />
                           </button>
                         )}
                         <img
                           src={selectedUser.photoURL || "/placeholder.svg?height=40&width=40"}
                           alt={selectedUser.displayName || selectedUser.email}
-                          className="w-10 h-10 rounded-full object-cover"
+                          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0"
                         />
-                        <div className="ml-3">
-                          <div className={`font-medium ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>
+                        <div className="ml-2 sm:ml-3 truncate">
+                          <div
+                            className={`font-medium ${theme === "light" ? "text-gray-800" : "text-gray-200"} truncate`}
+                          >
                             {selectedUser.displayName || selectedUser.email}
                           </div>
-                          <div className="text-sm text-gray-400">
+                          <div className="text-xs sm:text-sm text-gray-400">
                             {selectedUser.state === "online" ? "Online" : "Offline"}
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-3">
+                      <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
                         <button
-                          className={`p-2 ${theme === "light" ? "text-gray-600 hover:text-gray-800 hover:bg-gray-100" : "text-gray-400 hover:text-gray-200 hover:bg-[#2B3B5E]"} rounded-lg`}
+                          className={`p-1.5 sm:p-2 ${theme === "light" ? "text-gray-600 hover:text-gray-800 hover:bg-gray-100" : "text-gray-400 hover:text-gray-200 hover:bg-[#2B3B5E]"} rounded-lg hidden sm:block`}
                         >
-                          <Phone size={20} />
+                          <Phone size={18} />
                         </button>
                         <button
-                          className={`p-2 ${theme === "light" ? "text-gray-600 hover:text-gray-800 hover:bg-gray-100" : "text-gray-400 hover:text-gray-200 hover:bg-[#2B3B5E]"} rounded-lg`}
+                          className={`p-1.5 sm:p-2 ${theme === "light" ? "text-gray-600 hover:text-gray-800 hover:bg-gray-100" : "text-gray-400 hover:text-gray-200 hover:bg-[#2B3B5E]"} rounded-lg hidden sm:block`}
                         >
-                          <Video size={20} />
+                          <Video size={18} />
                         </button>
                         <button
                           onClick={() => setShowMediaFiles(!showMediaFiles)}
-                          className={`p-2 ${theme === "light" ? "text-gray-600 hover:text-gray-800 hover:bg-gray-100" : "text-gray-400 hover:text-gray-200 hover:bg-[#2B3B5E]"} rounded-lg`}
+                          className={`p-1.5 sm:p-2 ${theme === "light" ? "text-gray-600 hover:text-gray-800 hover:bg-gray-100" : "text-gray-400 hover:text-gray-200 hover:bg-[#2B3B5E]"} rounded-lg`}
                         >
-                          <MoreVertical size={20} />
+                          <MoreVertical size={18} />
                         </button>
                       </div>
                     </div>
@@ -1190,7 +1205,7 @@ export default function ChatApp({ user, onSignOut }) {
                           <p className="text-xs text-gray-500 mt-1">Uploading image: {Math.round(uploadProgress)}%</p>
                         </div>
                       )}
-                      <form onSubmit={handleSendMessage} className="flex items-center space-x-1 sm:space-x-3">
+                      <form onSubmit={handleSendMessage} className="flex items-center space-x-1">
                         <input
                           type="file"
                           accept="image/*"
@@ -1201,36 +1216,36 @@ export default function ChatApp({ user, onSignOut }) {
                         <button
                           type="button"
                           onClick={() => fileInputRef.current.click()}
-                          className={`p-2 ${theme === "light" ? "text-gray-600 hover:text-gray-800 hover:bg-gray-100" : "text-gray-400 hover:text-gray-200 hover:bg-[#2B3B5E]"} rounded-lg`}
+                          className={`p-1.5 sm:p-2 ${theme === "light" ? "text-gray-600 hover:text-gray-800 hover:bg-gray-100" : "text-gray-400 hover:text-gray-200 hover:bg-[#2B3B5E]"} rounded-lg flex-shrink-0`}
                           disabled={isUploading}
                         >
-                          <Image size={20} />
+                          <Image size={18} />
                         </button>
                         <button
                           type="button"
-                          className={`p-2 ${theme === "light" ? "text-gray-600 hover:text-gray-800 hover:bg-gray-100" : "text-gray-400 hover:text-gray-200 hover:bg-[#2B3B5E]"} rounded-lg`}
+                          className={`p-1.5 sm:p-2 ${theme === "light" ? "text-gray-600 hover:text-gray-800 hover:bg-gray-100" : "text-gray-400 hover:text-gray-200 hover:bg-[#2B3B5E]"} rounded-lg flex-shrink-0 hidden xs:block`}
                         >
-                          <Paperclip size={20} />
+                          <Paperclip size={18} />
                         </button>
                         <input
                           type="text"
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
                           placeholder="Type a Message..."
-                          className={`flex-1 ${theme === "light" ? "bg-gray-100 text-gray-800" : "bg-[#2B3B5E]/50 text-gray-200"} placeholder-gray-400 rounded-lg px-2 sm:px-4 py-2 sm:py-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500`}
+                          className={`flex-1 min-w-0 ${theme === "light" ? "bg-gray-100 text-gray-800" : "bg-[#2B3B5E]/50 text-gray-200"} placeholder-gray-400 rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500`}
                         />
                         <button
                           type="button"
-                          className={`p-2 ${theme === "light" ? "text-gray-600 hover:text-gray-800 hover:bg-gray-100" : "text-gray-400 hover:text-gray-200 hover:bg-[#2B3B5E]"} rounded-lg`}
+                          className={`p-1.5 sm:p-2 ${theme === "light" ? "text-gray-600 hover:text-gray-800 hover:bg-gray-100" : "text-gray-400 hover:text-gray-200 hover:bg-[#2B3B5E]"} rounded-lg flex-shrink-0 hidden xs:block`}
                         >
-                          <Smile size={20} />
+                          <Smile size={18} />
                         </button>
                         <button
                           type="submit"
                           disabled={isUploading || (!newMessage.trim() && !isUploading)}
-                          className="p-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                          className="p-1.5 sm:p-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex-shrink-0"
                         >
-                          <Send size={20} />
+                          <Send size={18} />
                         </button>
                       </form>
                     </div>
