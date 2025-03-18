@@ -358,7 +358,16 @@ export default function AppNavbar({ user, onSignOut, setSidebarOpen, sidebarOpen
 
             <div className={`py-2 border-t ${theme === "light" ? "border-gray-200" : "border-gray-700"}`}>
               <button
-                onClick={onSignOut}
+                onClick={async () => {
+                  try {
+                    // Wait for the sign out process to complete
+                    await onSignOut()
+                    // Then redirect to the login page
+                    window.location.href = "/"
+                  } catch (error) {
+                    console.error("Error signing out:", error)
+                  }
+                }}
                 className={`flex items-center w-full px-6 py-3 text-sm text-red-600 ${theme === "light" ? "hover:bg-gray-100" : "hover:bg-[#3B4B6E]"}`}
               >
                 <LogOut size={18} className="mr-3" />

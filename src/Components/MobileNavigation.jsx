@@ -289,9 +289,16 @@ export default function MobileNavigation({
 
             <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
               <button
-                onClick={() => {
-                  onSignOut()
-                  setDrawerOpen(false)
+                onClick={async () => {
+                  try {
+                    setDrawerOpen(false)
+                    // Wait for the sign out process to complete
+                    await onSignOut()
+                    // Then redirect to the login page
+                    window.location.href = "/"
+                  } catch (error) {
+                    console.error("Error signing out:", error)
+                  }
                 }}
                 className={`flex items-center w-full px-3 py-2.5 rounded-lg text-red-500 ${theme === "light" ? "hover:bg-gray-100" : "hover:bg-[#2B3B5E]"}`}
               >

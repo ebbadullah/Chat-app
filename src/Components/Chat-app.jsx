@@ -55,7 +55,7 @@ export default function ChatApp({ user, onSignOut }) {
   // Add a new state variable for tracking unread messages after the other state declarations
   const [unreadCounts, setUnreadCounts] = useState({})
 
-  // Context menu for message deletion
+  // Context menu Hai Msg delete karne ke liyeh 
   const [contextMenu, setContextMenu] = useState({
     isOpen: false,
     position: { x: 0, y: 0 },
@@ -66,10 +66,10 @@ export default function ChatApp({ user, onSignOut }) {
   // Add a new state variable
   const [expandedNavbar, setExpandedNavbar] = useState(false)
 
-  // Add a new state variable for mobile view management
+  //mobile per dekhne ke liyeh alg state variable lagai hai
   const [mobileView, setMobileView] = useState("list") // "list" or "chat"
 
-  // Add scrollbar hiding styles
+  // Ye Scroll Barr  ke liyeh hai  
   useEffect(() => {
     const style = document.createElement("style")
     style.textContent = `
@@ -713,13 +713,46 @@ export default function ChatApp({ user, onSignOut }) {
     setMobileView("list")
   }
 
+  // Handle sign out with proper redirection
+  const handleSignOut = async () => {
+    try {
+      // Import auth from Firebase
+      const { auth } = await import("../Firebase/firebase")
+
+      // Set user as offline before signing out
+      if (user) {
+        const userStatusRef = doc(db, "status", user.uid)
+        await setDoc(userStatusRef, {
+          state: "offline",
+          lastChanged: serverTimestamp(),
+          displayName: user.displayName || user.email,
+          photoURL: user.photoURL || null,
+          email: user.email,
+        })
+      }
+
+      // Sign out from Firebase
+      await auth.signOut()
+
+      // Redirect to the login page (root path)
+      window.location.href = "/"
+
+      // Call the original onSignOut if it exists (for compatibility)
+      if (onSignOut) {
+        onSignOut()
+      }
+    } catch (error) {
+      console.error("Error signing out:", error)
+    }
+  }
+
   return (
     <div className={`flex flex-col h-screen ${theme === "light" ? "bg-gray-100" : "bg-[#171F2F]"}`}>
       {/* Mobile Navigation */}
       <MobileNavigation
         user={user}
         theme={theme}
-        onSignOut={onSignOut}
+        onSignOut={handleSignOut}
         onProfileClick={() => setShowProfileUpdate(true)}
         toggleSidebar={toggleSidebar}
         sidebarOpen={sidebarOpen}
@@ -743,7 +776,7 @@ export default function ChatApp({ user, onSignOut }) {
         <div className="hidden md:block">
           <AppNavbar
             user={user}
-            onSignOut={onSignOut}
+            onSignOut={handleSignOut}
             setSidebarOpen={setSidebarOpen}
             sidebarOpen={sidebarOpen}
             theme={theme}
@@ -794,7 +827,7 @@ export default function ChatApp({ user, onSignOut }) {
                         Settings
                       </a>
                       <button
-                        onClick={onSignOut}
+                        onClick={handleSignOut}
                         className={`block w-full text-left px-4 py-2 text-sm ${theme === "light" ? "text-gray-700 hover:bg-gray-100" : "text-gray-200 hover:bg-[#3B4B6E]"}`}
                         role="menuitem"
                       >
@@ -847,9 +880,7 @@ export default function ChatApp({ user, onSignOut }) {
                             />
                             {searchUser.state === "online" && (
                               <span
-                                className={`absolute bottom-0 right-0 w-3 h-3 bg  && (
-                              <span
-                                className={\`absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 ${theme === "light" ? "border-white" : "border-[#1E2A47]"}`}
+                                className={`absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 ${theme === "light" ? "border-white" : "border-[#1E2A47]"}`}
                               ></span>
                             )}
                           </div>
