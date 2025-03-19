@@ -169,7 +169,7 @@ export default function ProfileUpdate({ user, onClose, theme }) {
             )}
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 mt-6">
+          <div className="flex n flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 mt-6">
             <button
               type="button"
               onClick={onClose}

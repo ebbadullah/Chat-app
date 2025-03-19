@@ -16,7 +16,8 @@ import {
 
 export default function AppSidebar({ theme, setOpen, open }) {
   const [activeItem, setActiveItem] = useState("modern")
-  const [dropMenu, setDropMenu] = useState(false) // Initially dropdown closed hoga
+  const [dropMenu, setDropMenu] = useState(false) // Initially dropdown closed
+  const [settingsDropdown, setSettingsDropdown] = useState(false) // State for settings dropdown
 
   // Home section items - 4 regular buttons
   const homeMenuItems = [
@@ -78,6 +79,22 @@ export default function AppSidebar({ theme, setOpen, open }) {
       navElement.addEventListener("scroll", handleScroll)
     }
 
+    // Close dropdowns when clicking outside
+    const handleClickOutside = (event) => {
+      const settingsButton = document.getElementById("settings-button")
+      const toolsButton = document.getElementById("tools-button")
+
+      if (settingsButton && !settingsButton.contains(event.target) && settingsDropdown) {
+        setSettingsDropdown(false)
+      }
+
+      if (toolsButton && !toolsButton.contains(event.target) && dropMenu) {
+        setDropMenu(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+
     return () => {
       if (sidebarElement) {
         sidebarElement.removeEventListener("mouseenter", handleMouseEnter)
@@ -87,9 +104,12 @@ export default function AppSidebar({ theme, setOpen, open }) {
       if (navElement) {
         navElement.removeEventListener("scroll", handleScroll)
       }
+
+      document.removeEventListener("mousedown", handleClickOutside)
+
       if (scrollTimer) clearTimeout(scrollTimer)
     }
-  }, [setOpen])
+  }, [setOpen, settingsDropdown, dropMenu])
 
   return (
     <div
@@ -194,28 +214,44 @@ export default function AppSidebar({ theme, setOpen, open }) {
                 </li>
               ))}
 
-              {/* Dropdown menu - 1 button */}
-              <li className="relative group">
+              {/* Settings dropdown - now opens downward */}
+              <li className="relative">
                 <button
-                  className={`flex items-center w-full p-2 rounded-lg transition-colors ${
-                    theme === "light" ? "text-gray-700 hover:bg-gray-100" : "text-gray-400 hover:bg-[#2B3B5E]"
+                  id="settings-button"
+                  className={`flex items-center justify-between w-full p-2.5 rounded-lg transition-colors ${
+                    activeItem === "settings"
+                      ? theme === "light"
+                        ? "bg-blue-50 text-blue-600"
+                        : "bg-blue-900/20 text-blue-400"
+                      : theme === "light"
+                        ? "text-gray-700 hover:bg-gray-100"
+                        : "text-gray-400 hover:bg-[#2B3B5E]"
                   }`}
+                  onClick={() => {
+                    setSettingsDropdown(!settingsDropdown)
+                    setActiveItem("settings")
+                    // Close other dropdown if open
+                    if (dropMenu) setDropMenu(false)
+                  }}
                 >
-                  <Settings size={20} />
+                  <div className="flex items-center">
+                    <Settings size={20} />
+                    {open && <span className="ml-3 hidden md:inline">Settings</span>}
+                  </div>
                   {open && (
-                    <>
-                      <span className="ml-3 flex-1">Settings</span>
-                      <ChevronDown size={16} />
-                    </>
+                    <ChevronDown
+                      size={16}
+                      className={`transform transition-transform duration-300 ${settingsDropdown ? "rotate-180" : "rotate-0"}`}
+                    />
                   )}
                 </button>
 
-                {/* Dropdown content - only shows on hover when sidebar is open */}
-                {open && (
+                {/* Dropdown content - shows below on click */}
+                {settingsDropdown && open && (
                   <div
-                    className={`absolute left-full top-0 w-48 ${
+                    className={`absolute left-0 top-full mt-1 w-full ${
                       theme === "light" ? "bg-white border-gray-200 shadow-lg" : "bg-[#2B3B5E] border-gray-700"
-                    } rounded-md border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 ml-2`}
+                    } rounded-md border transition-all duration-300 z-50`}
                   >
                     <div className="py-1">
                       <a
@@ -285,10 +321,11 @@ export default function AppSidebar({ theme, setOpen, open }) {
                 </li>
               ))}
 
-              {/* Tools dropdown */}
+              {/* Tools dropdown - opens downward */}
               <li className="relative">
                 <button
-                  className={`flex items-center justify-between w-full p-2 rounded-lg transition-colors ${
+                  id="tools-button"
+                  className={`flex items-center justify-between w-full p-2.5 rounded-lg transition-colors ${
                     activeItem === "Tools"
                       ? theme === "light"
                         ? "bg-blue-50 text-blue-600"
@@ -298,9 +335,11 @@ export default function AppSidebar({ theme, setOpen, open }) {
                         : "text-gray-400 hover:bg-[#2B3B5E] active:bg-[#1E2A45]"
                   }`}
                   onClick={() => {
-                    setDropMenu(!dropMenu) // Toggle the dropdown
-                    setActiveItem("Tools") // Set activeItem to "Tools"
-                  }} // Click pe "Tools" ko active karo
+                    setDropMenu(!dropMenu)
+                    setActiveItem("Tools")
+                    // Close other dropdown if open
+                    if (settingsDropdown) setSettingsDropdown(false)
+                  }}
                 >
                   <div className="flex items-center">
                     <Settings
@@ -313,34 +352,23 @@ export default function AppSidebar({ theme, setOpen, open }) {
                           : theme === "light"
                             ? "text-gray-700"
                             : "text-gray-400"
-                      }`} // Icon ka color change hoga based on activeItem
-                    />
-                    <span
-                      className={`ml-3 ${
-                        activeItem === "Tools"
-                          ? theme === "light"
-                            ? "text-blue-600"
-                            : "text-blue-400"
-                          : theme === "light"
-                            ? "text-gray-700"
-                            : "text-gray-400"
                       }`}
-                    >
-                      Tools
-                    </span>
+                    />
+                    {open && <span className="ml-3 hidden md:inline">Tools</span>}
                   </div>
 
-                  {/* Arrow rotation */}
-                  <ChevronDown
-                    size={16}
-                    className={`transform transition-transform duration-300 ${dropMenu ? "rotate-90" : "rotate-0"}`}
-                  />
+                  {open && (
+                    <ChevronDown
+                      size={16}
+                      className={`transform transition-transform duration-300 ${dropMenu ? "rotate-180" : "rotate-0"}`}
+                    />
+                  )}
                 </button>
 
-                {/* Dropdown content - will show only on click */}
-                {dropMenu && (
+                {/* Dropdown content - shows below on click */}
+                {dropMenu && open && (
                   <div
-                    className={`absolute top-full mt-2 w-48 ${
+                    className={`absolute left-0 top-full mt-1 w-full ${
                       theme === "light" ? "bg-white border-gray-200 shadow-lg" : "bg-[#2B3B5E] border-gray-700"
                     } rounded-md border transition-all duration-300 z-50`}
                   >
